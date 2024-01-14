@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@cosmjs/amino": "^0.32.2",
+    "@cosmjs/encoding": "^0.32.2",
+    "@cosmjs/proto-signing": "^0.32.2",
+    "@cosmjs/stargate": "^0.32.2",
+    "@lunie/cosmos-keys": "^0.3.2",
+    "ethereumjs-wallet": "^1.0.2",
+    "ethers": "^6.10.0",
+    "expo-cli": "^6.3.10"
+  }
+}
