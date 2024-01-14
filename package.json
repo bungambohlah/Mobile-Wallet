@@ -5,6 +5,8 @@
     "@cosmjs/proto-signing": "^0.32.2",
     "@cosmjs/stargate": "^0.32.2",
     "@lunie/cosmos-keys": "^0.3.2",
+    "cosmos-js": "^0.7.3",
+    "create-react-native-module": "^0.20.2",
     "ethereumjs-wallet": "^1.0.2",
     "ethers": "^6.10.0",
     "expo-cli": "^6.3.10"
