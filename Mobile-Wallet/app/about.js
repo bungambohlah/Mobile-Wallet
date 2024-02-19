@@ -5,7 +5,7 @@ export default function Page() {
   return (
     <View>
       <Text>About</Text>
-      <Link href="/about" asChild>
+      <Link href="/" asChild>
         <Pressable>
           <Text>Go to Home Page</Text>
         </Pressable>
