@@ -1,6 +1,6 @@
 {
-  "scheme": "your-app-scheme",
   "expo": {
+    "scheme": "Mobile-Wallet",
     "name": "Mobile-Wallet",
     "slug": "Mobile-Wallet",
     "version": "1.0.0",
@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#01081F"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
