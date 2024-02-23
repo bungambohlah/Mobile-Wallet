@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 import { Link, Stack } from "expo-router";
+import { ethers } from "ethers";
+
+import { useSession } from "../hooks/ctx";
+import { Onboarding } from "../components/onboarding/Onboarding";
 
 export default function Page() {
   const [address, setAddress] = useState("");
   const [balance, setBalance] = useState("");
+  const { isOnboard } = useSession();
 
   const getBalance = async () => {
     try {
-      const provider = new ethers.providers.EtherscanProvider(); // Using Etherscan's default provider
+      const provider = new ethers.EtherscanProvider(); // Using Etherscan's default provider
       const balance = await provider.getBalance(address);
       setBalance(ethers.utils.formatEther(balance));
     } catch (error) {
@@ -16,6 +21,11 @@ export default function Page() {
       setBalance("Error");
     }
   };
+
+  // show onboarding view first if not yet
+  if (!isOnboard) {
+    return <Onboarding />;
+  }
 
   return (
     <View className="flex p-8 pt-16 flex-col gap-2" style={styles.container}>

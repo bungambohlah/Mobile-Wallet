@@ -15,11 +15,13 @@ import {
 } from "@expo-google-fonts/inter";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-// import * as NavigationBar from "expo-navigation-bar";
+import * as NavigationBar from "expo-navigation-bar";
+import { PaperProvider } from "react-native-paper";
+import { SessionProvider } from "../hooks/ctx";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
-// NavigationBar.setBackgroundColorAsync("#01081F");
+NavigationBar.setBackgroundColorAsync("#01081F");
 
 export default function Page() {
   const [isReady, setReady] = useState(false);
@@ -73,8 +75,12 @@ export default function Page() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar backgroundColor="#01081F" />
-      <Stack screenOptions={{ headerShown: false }} />
+      <SessionProvider>
+        <PaperProvider>
+          <StatusBar backgroundColor="#01081F" />
+          <Stack screenOptions={{ headerShown: false }} />
+        </PaperProvider>
+      </SessionProvider>
     </SafeAreaProvider>
   );
 }
