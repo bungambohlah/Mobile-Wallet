@@ -1,11 +1,17 @@
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
   useWindowDimensions,
   View,
   Button,
+  Alert,
   TouchableOpacity,
 } from "react-native";
+import { Buffer } from 'buffer';
+global.Buffer = Buffer;
+import 'react-native-get-random-values';
+
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -17,6 +23,8 @@ import Animated, {
 import { Pagination } from "./Pagination";
 import { themeColor } from "../../constants/themeColor";
 import { data as dataOnboarding } from "../../constants/dataOnboarding";
+import { Link } from "expo-router";
+import { generateWallet } from "../../utils/wallethelper/generate";
 
 const RenderItem = ({ item, index, x }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -78,6 +86,19 @@ const RenderItem = ({ item, index, x }) => {
 };
 
 export function Onboarding() {
+  const [walletDetails, setWalletDetails] = useState(null);
+
+  const handleCreateWallet = async () => {
+    try {
+      const newWalletDetails = await generateWallet();
+      setWalletDetails(newWalletDetails); // Update state with new wallet details
+      console.log('Wallet created:', newWalletDetails);
+      Alert.alert('Wallet Created', 'Your new wallet has been successfully created.');
+    } catch (error) {
+      console.error('Error creating new wallet:', error);
+      Alert.alert('Error', 'There was an error creating the new wallet.');
+    }
+  };
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const flatListRef = useAnimatedRef();
 
@@ -112,7 +133,7 @@ export function Onboarding() {
 
       <Pagination data={dataOnboarding} screenWidth={SCREEN_WIDTH} x={x} />
       <View style={styles.footerContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleCreateWallet} >
           <Text style={{ ...styles.buttonPrimaryBoarding, width: SCREEN_WIDTH - 60 }}>
             Create a new wallet
           </Text>
