@@ -9,6 +9,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@ethersproject/providers": "^5.7.2",
+    "@ethersproject/wallet": "^5.7.0",
     "@expo-google-fonts/inter": "^0.2.3",
     "@expo/config": "^8.1.1",
     "@expo/metro-config": "^0.10.0",
