@@ -1,16 +1,8 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-  Button,
-  Alert,
-  TouchableOpacity,
-} from "react-native";
-import { Buffer } from 'buffer';
+import React, { useState } from "react";
+import { StyleSheet, Text, useWindowDimensions, View, Alert, TouchableOpacity } from "react-native";
+import { Buffer } from "buffer";
 global.Buffer = Buffer;
-import 'react-native-get-random-values';
+import "react-native-get-random-values";
 
 import Animated, {
   interpolate,
@@ -23,7 +15,7 @@ import Animated, {
 import { Pagination } from "./Pagination";
 import { themeColor } from "../../constants/themeColor";
 import { data as dataOnboarding } from "../../constants/dataOnboarding";
-import { Link } from "expo-router";
+import { Stack, router } from "expo-router";
 import { generateWallet } from "../../utils/wallethelper/generate";
 
 const RenderItem = ({ item, index, x }) => {
@@ -92,11 +84,12 @@ export function Onboarding() {
     try {
       const newWalletDetails = await generateWallet();
       setWalletDetails(newWalletDetails); // Update state with new wallet details
-      console.log('Wallet created:', newWalletDetails);
-      Alert.alert('Wallet Created', 'Your new wallet has been successfully created.');
+      console.log("Wallet created:", newWalletDetails);
+      Alert.alert("Wallet Created", "Your new wallet has been successfully created.");
+      router.replace("/(tabs)");
     } catch (error) {
-      console.error('Error creating new wallet:', error);
-      Alert.alert('Error', 'There was an error creating the new wallet.');
+      console.error("Error creating new wallet:", error);
+      Alert.alert("Error", "There was an error creating the new wallet.");
     }
   };
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -117,6 +110,10 @@ export function Onboarding() {
 
   return (
     <View style={styles.container}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(app)" options={{ headerShown: false }} />
+      </Stack>
       <Animated.FlatList
         ref={flatListRef}
         data={dataOnboarding}
@@ -133,7 +130,7 @@ export function Onboarding() {
 
       <Pagination data={dataOnboarding} screenWidth={SCREEN_WIDTH} x={x} />
       <View style={styles.footerContainer}>
-        <TouchableOpacity onPress={handleCreateWallet} >
+        <TouchableOpacity onPress={handleCreateWallet}>
           <Text style={{ ...styles.buttonPrimaryBoarding, width: SCREEN_WIDTH - 60 }}>
             Create a new wallet
           </Text>
