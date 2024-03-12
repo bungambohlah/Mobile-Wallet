@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { Slot, Stack } from "expo-router";
+import { useEffect, useState } from "react";
+import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import {
   useFonts,
@@ -17,11 +17,13 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as NavigationBar from "expo-navigation-bar";
 import { PaperProvider } from "react-native-paper";
+
 import { SessionProvider } from "../hooks/ctx";
+import { themeColor } from "../constants/themeColor";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
-NavigationBar.setBackgroundColorAsync("#01081F");
+NavigationBar.setBackgroundColorAsync(themeColor.appBackgroundColor);
 
 export default function Page() {
   const [isReady, setReady] = useState(false);
@@ -62,7 +64,7 @@ export default function Page() {
     <SafeAreaProvider>
       <SessionProvider>
         <PaperProvider>
-          <StatusBar backgroundColor="#01081F" />
+          <StatusBar backgroundColor={themeColor.appBackgroundColor} />
           <Slot />
         </PaperProvider>
       </SessionProvider>
