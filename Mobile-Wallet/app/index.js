@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
-import { Link, Stack } from "expo-router";
+import { Link } from "expo-router";
 import { ethers } from "ethers";
 
 import { useSession } from "../hooks/ctx";
@@ -29,11 +29,7 @@ export default function Page() {
 
   return (
     <View className="flex p-8 pt-16 flex-col gap-2" style={styles.container}>
-      <Stack.Screen />
       <Text className="text-white">Home</Text>
-      <Link href="/about" asChild>
-        <Button title="Go to About Page" />
-      </Link>
       <View>
         <TextInput
           className="h-10 w-10/12 border-gray-500 border mb-3 p-3 text-white"
