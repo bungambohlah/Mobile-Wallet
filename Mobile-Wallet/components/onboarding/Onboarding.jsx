@@ -86,7 +86,7 @@ export function Onboarding() {
       setWalletDetails(newWalletDetails); // Update state with new wallet details
       console.log("Wallet created:", newWalletDetails);
       Alert.alert("Wallet Created", "Your new wallet has been successfully created.");
-      router.replace("/(tabs)");
+      router.push("/new-wallet");
     } catch (error) {
       console.error("Error creating new wallet:", error);
       Alert.alert("Error", "There was an error creating the new wallet.");
