@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, useWindowDimensions, View, Alert, TouchableOpacity } from "react-native";
 import { Buffer } from "buffer";
 global.Buffer = Buffer;
@@ -17,6 +17,7 @@ import { themeColor } from "../../constants/themeColor";
 import { data as dataOnboarding } from "../../constants/dataOnboarding";
 import { Stack, router } from "expo-router";
 import { generateWallet } from "../../utils/wallethelper/generate";
+import { useSession } from "../../hooks/ctx";
 
 const RenderItem = ({ item, index, x }) => {
   const { width: SCREEN_WIDTH } = useWindowDimensions();
@@ -78,12 +79,12 @@ const RenderItem = ({ item, index, x }) => {
 };
 
 export function Onboarding() {
-  const [walletDetails, setWalletDetails] = useState(null);
+  const { setUserWallet } = useSession();
 
   const handleCreateWallet = async () => {
     try {
       const newWalletDetails = await generateWallet();
-      setWalletDetails(newWalletDetails); // Update state with new wallet details
+      setUserWallet(JSON.stringify(newWalletDetails));
       console.log("Wallet created:", newWalletDetails);
       Alert.alert("Wallet Created", "Your new wallet has been successfully created.");
       router.push("/new-wallet");
