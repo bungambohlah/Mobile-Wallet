@@ -1,11 +1,13 @@
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import { useState } from "react";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Button, Icon } from "react-native-paper";
 import StepIndicator from "react-native-step-indicator";
+import { router } from "expo-router";
 
 import { themeColor } from "../../constants/themeColor";
-import { router } from "expo-router";
-import { useState } from "react";
-import Animated from "react-native-reanimated";
+import Page1 from "../../components/newWallet/Page1";
+import Page2 from "../../components/newWallet/Page2";
+import Page3 from "../../components/newWallet/Page3";
 
 const labels = ["", "", ""];
 const customStyles = {
@@ -31,9 +33,9 @@ const customStyles = {
   labelSize: 13,
   currentStepLabelColor: "#7eaec4",
 };
-const image = require("../../assets/success.png");
 
 export default function Page() {
+  const [processNext, setProcessNext] = useState(0);
   const [step, setStep] = useState(0);
 
   const onStepPress = (position) => {
@@ -66,45 +68,19 @@ export default function Page() {
         </View>
       </View>
       {step === 0 ? (
-        <View style={styles.page}>
-          <Text style={styles.text}>Page 1</Text>
-        </View>
+        <Page1 processNext={processNext} setProcessNext={setProcessNext} setStep={setStep} />
       ) : null}
       {step === 1 ? (
-        <View style={styles.page}>
-          <Text style={styles.text}>Page 2</Text>
-        </View>
+        <Page2 processNext={processNext} setProcessNext={setProcessNext} setStep={setStep} />
       ) : null}
       {step === 2 ? (
-        <View className="gap-16 p-6" style={styles.page}>
-          {/* step 3 */}
-          <Animated.Image
-            source={image}
-            style={{ objectFit: "contain", width: 142, height: 142 }}
-          />
-          <Text className="font-bold text-xl" style={styles.text}>
-            Congratulations
-          </Text>
-          <View className="mt-16 gap-4">
-            <Text className="text-center" style={styles.text}>
-              You've successfully protected your wallet. Remember to keep your seed phrase safe,
-              it's your responsibility!
-            </Text>
-            <Text className="text-center" style={styles.text}>
-              DefiSquid cannot recover your wallet should you lose it. You can find your seedphrase
-              in{" "}
-              <Text style={{ ...styles.text, color: themeColor.buttonPrimaryBackgroundColor }}>
-                Setings &gt; Security & Privacy
-              </Text>
-            </Text>
-          </View>
-        </View>
+        <Page3 processNext={processNext} setProcessNext={setProcessNext} setStep={setStep} />
       ) : null}
       <View className="w-full pb-2 items-center">
         {step < 2 ? (
           <Button
             mode="contained"
-            onPress={() => setStep((s) => s + 1)}
+            onPress={() => setProcessNext(step + 1)}
             buttonColor={themeColor.buttonPrimaryBackgroundColor}
             style={{ borderRadius: 12, width: "80%" }}
             contentStyle={{ borderRadius: 12, height: 50 }}
@@ -137,14 +113,5 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     paddingTop: 64,
     padding: 16,
-  },
-  text: {
-    fontFamily: "Inter_400Regular",
-    color: "white",
-  },
-  page: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

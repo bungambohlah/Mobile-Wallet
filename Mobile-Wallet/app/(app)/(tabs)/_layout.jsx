@@ -1,7 +1,6 @@
 import { Tabs } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as NavigationBar from "expo-navigation-bar";
-import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 
 import { themeColor } from "../../../constants/themeColor";
@@ -11,7 +10,6 @@ NavigationBar.setBackgroundColorAsync(themeColor.appBackgroundColor);
 export default function AppLayout() {
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor={themeColor.appBackgroundColor} />
       <Tabs screenOptions={{ headerShown: false }}>
         <Tabs.Screen
           name="index"

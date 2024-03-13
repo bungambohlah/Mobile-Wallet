@@ -7,4 +7,7 @@ export const themeColor = {
   buttonPrimaryTextColor: "#fff",
   buttonOutlineBackgroundColor: "#3671E9",
   buttonOutlineTextColor: "#fff",
+  neutralColor: "#B3B3B3",
+  checkedColor: "#55FE66",
+  errorColor: "#FF0000",
 };
