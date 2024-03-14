@@ -7,7 +7,7 @@ import { themeColor } from "../constants/themeColor";
 export default function FormInput({
   type,
   password,
-  setPassword,
+  onChangeText,
   error,
   errorMessage,
   placeholder,
@@ -21,7 +21,7 @@ export default function FormInput({
         <TextInput
           mode="outlined"
           value={password}
-          onChangeText={(text) => setPassword(text)}
+          onChangeText={onChangeText}
           returnKeyType="go"
           autoCorrect={false}
           placeholder={placeholder}

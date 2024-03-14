@@ -18,21 +18,107 @@ export default function Page1({ processNext, setProcessNext, setStep }) {
     checkedError: false,
   });
 
-  let passwordSchema = object({
+  let passwordSchema = object().shape({
     password: string().required("Password is required.").min(8, "Must be at least 8 characters."),
+  });
+  let passwordConfirmSchema = object().shape({
     passwordConfirm: string()
-      .required("Password is required.")
+      .required("Password Confirm is required.")
       .min(8, "Must be at least 8 characters.")
       .oneOf([ref("password"), null], "Password doesn't match."),
+  });
+  let checkedSchema = object().shape({
     checked: boolean().oneOf([true]),
   });
+  let fullPasswordSchema = passwordSchema.concat(passwordConfirmSchema).concat(checkedSchema);
+
+  function onChangePassword(text) {
+    setPassword(text);
+    passwordSchema
+      .validate({ password: text })
+      .then(() => {
+        setErrors((s) => ({
+          ...s,
+          ...{
+            passwordError: false,
+            passwordErrorMessage: "",
+          },
+        }));
+      })
+      .catch((err) => {
+        setErrors((s) => ({
+          ...s,
+          ...{
+            passwordError: err.errors?.length ? true : false,
+            passwordErrorMessage: err.errors?.length ? err.errors[0] : "",
+          },
+        }));
+      });
+  }
+
+  function onChangePasswordConfirm(text) {
+    setPasswordConfirm(text);
+    const usedSchema = passwordSchema.concat(passwordConfirmSchema);
+
+    usedSchema
+      .validate({ password, passwordConfirm: text }, { abortEarly: false })
+      .then(() => {
+        setErrors((s) => ({
+          ...s,
+          ...{
+            passwordConfirmError: false,
+            passwordConfirmErrorMessage: "",
+          },
+        }));
+      })
+      .catch((err) => {
+        let validationErrors = "";
+        err.inner.forEach((error) => {
+          if (error.path === "passwordConfirm") {
+            validationErrors = error.message;
+          }
+        });
+
+        setErrors((s) => ({
+          ...s,
+          ...{
+            passwordConfirmError: validationErrors?.length ? true : false,
+            passwordConfirmErrorMessage: validationErrors?.length ? validationErrors : "",
+          },
+        }));
+      });
+  }
+
+  function onPressChecked() {
+    setChecked((s) => {
+      checkedSchema
+        .validate({ checked: !s })
+        .then(() => {
+          setErrors((s) => ({
+            ...s,
+            ...{
+              checkedError: false,
+            },
+          }));
+        })
+        .catch((err) => {
+          setErrors((s) => ({
+            ...s,
+            ...{
+              checkedError: err.errors?.length ? true : false,
+            },
+          }));
+        });
+
+      return !s;
+    });
+  }
 
   useEffect(() => {
     if (processNext === 1) {
-      Promise.all([
-        passwordSchema.validate({ password, passwordConfirm, checked }, { abortEarly: false }),
-      ])
-        .then(([passwordValidation, passwordConfirmValidation, checkedValidation]) => {
+      fullPasswordSchema
+        .validate({ password, passwordConfirm, checked }, { abortEarly: false })
+        .then(() => {
           setErrors((s) => ({
             ...s,
             ...{
@@ -54,7 +140,6 @@ export default function Page1({ processNext, setProcessNext, setStep }) {
               validationErrors[error.path] = error.message;
             }
           });
-          console.log(validationErrors);
           setErrors((s) => ({
             ...s,
             ...{
@@ -95,7 +180,7 @@ export default function Page1({ processNext, setProcessNext, setStep }) {
           error={errors.passwordError}
           errorMessage={errors.passwordErrorMessage}
           password={password}
-          setPassword={setPassword}
+          onChangeText={onChangePassword}
           placeholder="New password"
         />
         <FormInput
@@ -104,7 +189,7 @@ export default function Page1({ processNext, setProcessNext, setStep }) {
           error={errors.passwordConfirm}
           errorMessage={errors.passwordConfirmErrorMessage}
           password={passwordConfirm}
-          setPassword={setPasswordConfirm}
+          onChangeText={onChangePasswordConfirm}
           placeholder="Confirm password"
         />
         <View className="flex flex-row w-full pr-6 gap-2">
@@ -112,9 +197,7 @@ export default function Page1({ processNext, setProcessNext, setStep }) {
             status={checked ? "checked" : "unchecked"}
             color={themeColor.checkedColor}
             uncheckedColor={errors.checkedError ? themeColor.errorColor : themeColor.neutralColor}
-            onPress={() => {
-              setChecked(!checked);
-            }}
+            onPress={onPressChecked}
           />
           <View className="flex flex-wrap">
             <Text

@@ -57,7 +57,7 @@ export default function Page() {
         <TouchableOpacity onPress={buttonBack} style={{ marginTop: -24 }}>
           <Icon source="chevron-left" size={32} color="white" />
         </TouchableOpacity>
-        <View className="w-fulll flex-1">
+        <View className="w-full flex-1">
           <StepIndicator
             customStyles={customStyles}
             currentPosition={step}
