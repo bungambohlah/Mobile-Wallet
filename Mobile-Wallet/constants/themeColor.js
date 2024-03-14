@@ -10,4 +10,5 @@ export const themeColor = {
   neutralColor: "#B3B3B3",
   checkedColor: "#55FE66",
   errorColor: "#FF0000",
+  modalBottomBackgroundColor: "#121212",
 };
