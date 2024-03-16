@@ -99,7 +99,11 @@ export default function Page2({ processNext, setProcessNext, setStep }) {
                   className="w-1/2"
                   style={{ borderRadius: 12, height: 50 }}
                   contentStyle={{ borderRadius: 12, height: 50 }}
-                  onPress={() => setProcessNext((s) => s + 1)}
+                  onPress={() => {
+                    setProcessNext(2);
+                    setStep(2);
+                    setSection("main");
+                  }}
                 >
                   Skip
                 </Button>

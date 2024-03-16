@@ -34,7 +34,7 @@ export default function Page2_B({ processNext, setProcessNext, section, setStep 
             style={styles.card}
           >
             {userWallet.mnemonic?.split(" ")?.map((val, idx) => (
-              <View style={styles.mnemonic}>
+              <View key={idx} style={styles.mnemonic}>
                 <Text className="text-xs" style={styles.mnemonicText}>
                   {idx + 1}. {val}
                 </Text>
