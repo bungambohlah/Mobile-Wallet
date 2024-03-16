@@ -14,4 +14,5 @@ export const themeColor = {
   errorColor: "#FF0000",
   modalBottomBackgroundColor: "#121212",
   cardBackgroundColor: "#333333",
+  phraseBorderColor: "#388BFF",
 };
