@@ -17,6 +17,7 @@ export function useSession() {
 
 export function SessionProvider(props) {
   const [[isOnboardLoading, isOnboard], setIsOnboard] = useStorageState("isOnboard");
+  const [[isUserWalletLoading, userWallet], setUserWallet] = useStorageState("userWallet");
 
   return (
     <AuthContext.Provider
@@ -24,6 +25,9 @@ export function SessionProvider(props) {
         isOnboard,
         isOnboardLoading,
         setIsOnboard,
+        userWallet,
+        isUserWalletLoading,
+        setUserWallet,
       }}
     >
       {props.children}
