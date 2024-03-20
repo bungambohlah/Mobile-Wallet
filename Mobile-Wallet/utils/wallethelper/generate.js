@@ -19,11 +19,11 @@ function generateWallet() {
 
     let planqAddress = '';
     try {
-        console.log("Converting to Planq Address...");
+       // console.log("Converting to Planq Address...");
         planqAddress = convertToPlanqAddress(wallet.address);
-        console.log("Corresponding Planq Address:", planqAddress);
+       // console.log("Corresponding Planq Address:", planqAddress);
     } catch (error) {
-        console.error("Error converting Ethereum address to Planq address:", error.message);
+       // console.error("Error converting Ethereum address to Planq address:", error.message);
     }
 
     return {
