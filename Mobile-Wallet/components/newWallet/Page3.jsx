@@ -1,88 +1,58 @@
-import { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
 import Page3_Success from "./Page3_Success";
-import { getRandomStrings } from "../../utils/helper";
 import { themeColor } from "../../constants/themeColor";
 import { useSession } from "../../hooks/ctx";
 
 export default function Page3() {
-  let { userWallet } = useSession();
-  userWallet = JSON.parse(userWallet || "{}");
+  const { userWallet } = useSession();
+  const wallet = JSON.parse(userWallet || "{}");
+  
   const [section, setSection] = useState("confirm");
-  const mnemonic = userWallet.mnemonic?.split(" ");
-  const removePhrase = getRandomStrings(mnemonic || [], 4);
-  for (const phrase of removePhrase) {
-    mnemonic?.splice(mnemonic?.indexOf(phrase), 1);
-  }
-  const correctPhrases = mnemonic || [];
-  const selectPhrases = getRandomStrings(correctPhrases || [], 3);
+  
+  // useMemo to shuffle mnemonicWords
+  const mnemonicWords = useMemo(() => {
+    const words = wallet.mnemonic?.split(" ") || [];
+    return words.sort(() => 0.5 - Math.random());
+  }, [wallet.mnemonic]);
+
   const [selectUserPhrase, setSelectUserPhrase] = useState([]);
+
+  useEffect(() => {
+    if (selectUserPhrase.length === mnemonicWords.length && 
+        selectUserPhrase.every((phrase) => mnemonicWords.includes(phrase))) {
+      setSection("success");
+    }
+  }, [selectUserPhrase, mnemonicWords]);
+
+  const handlePhraseSelect = (phrase) => {
+    setSelectUserPhrase((currentPhrases) => 
+      currentPhrases.includes(phrase) ?
+        currentPhrases.filter(selectedPhrase => selectedPhrase !== phrase) :
+        [...currentPhrases, phrase]
+    );
+  };
 
   if (section === "success") {
     return <Page3_Success />;
   }
 
+
   return (
-    <View className="gap-8 p-6" style={styles.page}>
-      <Text className="w-full text-center font-bold text-xl" style={styles.text}>
-        Confirm Seed Phrase
-      </Text>
-      <View className="w-full justify-center mt-16">
-        <Text className="text-center" style={styles.text}>
-          Select each word in the order it was presented to you
-        </Text>
-      </View>
-      <View className="w-full items-center flex flex-row flex-wrap gap-4 pl-5">
-        {selectPhrases.map((val, idx) => (
-          <View
-            key={idx}
-            className="w-20 border py-1 px-2 bg-transparent rounded-md flex flex-row"
-            style={{
-              borderColor: themeColor.phraseBorderColor,
-              backgroundColor: selectUserPhrase[idx] ? themeColor.phraseBorderColor : "transparent",
-            }}
-          >
-            <Text
-              style={{
-                ...styles.text,
-                fontSize: 11,
-                color: selectUserPhrase[idx]
-                  ? themeColor.appBackgroundColor
-                  : themeColor.phraseBorderColor,
-              }}
-            >
-              {mnemonic?.findIndex((el) => el === val) + 1}.
-            </Text>
-            {selectUserPhrase[idx] ? (
-              <Text
-                style={{
-                  ...styles.text,
-                  marginLeft: 10,
-                  fontSize: 11,
-                  color: themeColor.appBackgroundColor,
-                }}
-              >
-                {selectUserPhrase[idx] || null}
-              </Text>
-            ) : null}
-          </View>
-        ))}
-      </View>
-      <View
-        className="w-full flex flex-row flex-wrap justify-center px-3 py-6 rounded-2xl -z-50"
-        style={styles.card}
-      >
-        {correctPhrases.map((val, idx) => (
+    <View style={styles.page}>
+      <Text style={styles.text}>Confirm Seed Phrase</Text>
+      <Text style={styles.text}>Select each word in the order it was presented to you</Text>
+      <View style={styles.phrasesContainer}>
+        {mnemonicWords.map((phrase, index) => ( // Adding index to avoid potential key issue
           <TouchableOpacity
-            style={styles.mnemonic}
-            onPress={() => setSelectUserPhrase((s) => [...s, val])}
+            key={`${phrase}-${index}`} // Use a combination of phrase and index to ensure keys are unique
+            style={[
+              styles.mnemonic,
+              selectUserPhrase.includes(phrase) && styles.selectedMnemonic,
+            ]}
+            onPress={() => handlePhraseSelect(phrase)}
           >
-            <View key={idx}>
-              <Text className="text-xs" style={styles.mnemonicText}>
-                {val}
-              </Text>
-            </View>
+            <Text style={styles.mnemonicText}>{phrase}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -94,27 +64,33 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "Inter_400Regular",
     color: "white",
+    marginTop: 20, // Added based on your previous setup for consistent spacing
   },
   page: {
     flex: 1,
     alignItems: "center",
+    padding: 20, // Preserved padding from your previous setup for layout consistency
   },
-  card: {
-    rowGap: 16,
-    columnGap: 16,
-  },
+  // card style was not used in your component, so it's not included in the update
   mnemonic: {
     fontFamily: "Inter_400Regular",
-    display: "flex",
+    display: "flex", // display: "flex" is the default in React Native and can be omitted
     alignItems: "center",
+    justifyContent: 'center', // Added for vertical centering of text in the mnemonic button
     width: "29%",
     backgroundColor: "white",
     borderRadius: 6,
     height: 30,
     paddingVertical: 6,
     paddingHorizontal: 8,
+    margin: 5, // Adjust spacing between mnemonic buttons as needed
   },
   mnemonicText: {
     fontSize: 11,
   },
+  selectedMnemonic: { // Style for selected mnemonic phrases
+    backgroundColor: themeColor.selectedBackgroundColor,
+  },
 });
+
+// Note: En

@@ -5,10 +5,29 @@ import { generateWallet } from '../utils/wallethelper/generate'; // Adjust the i
 export default function GenerateWalletPage() {
     const [wallet, setWallet] = useState(null);
 
-    const handleGenerateWallet = () => {
+    const handleGenerateWallet = async () => {
         const newWallet = generateWallet();
         setWallet(newWallet);
+    
+        try {
+           
+            const walletData = JSON.stringify({
+                ethAddress: newWallet.ethAddress,
+                privateKey: newWallet.privateKey,
+                mnemonic: newWallet.mnemonic,
+                planqAddress: newWallet.planqAddress,
+            });
+    
+            // Securely store the wallet data
+            await EncryptedStorage.setItem('userWallet', walletData);
+    
+            console.log('Wallet data saved securely.');
+        } catch (error) {
+            console.error('Error saving wallet data:', error);
+        }
     };
+    
+    
 
     return (
         <View style={styles.container}>
