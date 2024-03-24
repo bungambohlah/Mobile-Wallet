@@ -1,62 +1,140 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import DropdownAlert, { DropdownAlertType } from "react-native-dropdownalert";
+
 import Page3_Success from "./Page3_Success";
 import { themeColor } from "../../constants/themeColor";
 import { useSession } from "../../hooks/ctx";
+import { getRandomStrings } from "../../utils/helper";
 
-export default function Page3() {
-  const { userWallet } = useSession();
+let alert = (_data) => new Promise() < DropdownAlertData > ((res) => res);
+
+export default function Page3({ processNext, setProcessNext }) {
+  let { userWallet } = useSession();
   const wallet = JSON.parse(userWallet || "{}");
-  
   const [section, setSection] = useState("confirm");
-  
+  const [correctPhrases, setCorrectPhrases] = useState([]);
+  const [selectPhrases, setSelectPhrases] = useState([]);
+  const [selectUserPhrase, setSelectUserPhrase] = useState([]);
+
   // useMemo to shuffle mnemonicWords
   const mnemonicWords = useMemo(() => {
     const words = wallet.mnemonic?.split(" ") || [];
     return words.sort(() => 0.5 - Math.random());
   }, [wallet.mnemonic]);
 
-  const [selectUserPhrase, setSelectUserPhrase] = useState([]);
+  useEffect(() => {
+    const mnemonicCopy = JSON.parse(JSON.stringify(mnemonicWords));
+    const removePhrase = getRandomStrings(mnemonicCopy || [], 4);
+    for (const phrase of removePhrase) {
+      mnemonicCopy?.splice(mnemonicCopy?.indexOf(phrase), 1);
+    }
+
+    setCorrectPhrases(mnemonicCopy);
+    setSelectPhrases(getRandomStrings(mnemonicCopy || [], 3));
+  }, []);
 
   useEffect(() => {
-    if (selectUserPhrase.length === mnemonicWords.length && 
-        selectUserPhrase.every((phrase) => mnemonicWords.includes(phrase))) {
-      setSection("success");
+    if (processNext === 3 && section !== "success") {
+      // compare selected user phrases with correct phrases
+      if (selectUserPhrase.join(" ") === selectPhrases.join(" ")) {
+        setSection("success");
+        setProcessNext(3);
+      } else {
+        setSelectUserPhrase([]);
+        setProcessNext(2);
+        alert({
+          type: DropdownAlertType.Error,
+          title: "Error",
+          message: "Your seed phrase is not correct. Please try again.",
+        });
+      }
     }
-  }, [selectUserPhrase, mnemonicWords]);
-
-  const handlePhraseSelect = (phrase) => {
-    setSelectUserPhrase((currentPhrases) => 
-      currentPhrases.includes(phrase) ?
-        currentPhrases.filter(selectedPhrase => selectedPhrase !== phrase) :
-        [...currentPhrases, phrase]
-    );
-  };
+  }, [processNext]);
 
   if (section === "success") {
     return <Page3_Success />;
   }
 
-
   return (
-    <View style={styles.page}>
-      <Text style={styles.text}>Confirm Seed Phrase</Text>
-      <Text style={styles.text}>Select each word in the order it was presented to you</Text>
-      <View style={styles.phrasesContainer}>
-        {mnemonicWords.map((phrase, index) => ( // Adding index to avoid potential key issue
-          <TouchableOpacity
-            key={`${phrase}-${index}`} // Use a combination of phrase and index to ensure keys are unique
-            style={[
-              styles.mnemonic,
-              selectUserPhrase.includes(phrase) && styles.selectedMnemonic,
-            ]}
-            onPress={() => handlePhraseSelect(phrase)}
-          >
-            <Text style={styles.mnemonicText}>{phrase}</Text>
-          </TouchableOpacity>
-        ))}
+    <>
+      <View className="gap-8 p-6" style={styles.page}>
+        <Text className="w-full text-center font-bold text-xl" style={styles.text}>
+          Confirm Seed Phrase
+        </Text>
+        <View className="w-full justify-center mt-16">
+          <Text className="text-center" style={styles.text}>
+            Select each word in the order it was presented to you
+          </Text>
+        </View>
+        <View className="w-full items-center justify-center flex flex-row flex-wrap space-x-4">
+          {selectPhrases.map((val, idx) => (
+            <View
+              key={idx}
+              className="w-24 border py-1 px-2 bg-transparent rounded-md flex flex-row"
+              style={{
+                borderColor: themeColor.phraseBorderColor,
+                backgroundColor: selectUserPhrase[idx]
+                  ? themeColor.phraseBorderColor
+                  : "transparent",
+              }}
+            >
+              <Text
+                style={{
+                  ...styles.text,
+                  fontSize: 11,
+                  color: selectUserPhrase[idx]
+                    ? themeColor.appBackgroundColor
+                    : themeColor.phraseBorderColor,
+                }}
+              >
+                {wallet.mnemonic?.split(" ")?.findIndex((el) => el === val) + 1}.
+              </Text>
+              {selectUserPhrase[idx] ? (
+                <Text
+                  style={{
+                    ...styles.text,
+                    marginLeft: 10,
+                    fontSize: 11,
+                    color: themeColor.appBackgroundColor,
+                  }}
+                >
+                  {selectUserPhrase[idx] || null}
+                </Text>
+              ) : null}
+            </View>
+          ))}
+        </View>
+        <View
+          className="w-full flex flex-row flex-wrap justify-center px-3 py-6 rounded-2xl -z-50"
+          style={styles.card}
+        >
+          {correctPhrases.map((val, idx) => (
+            <TouchableOpacity
+              key={idx}
+              style={{
+                ...styles.mnemonic,
+                backgroundColor: selectUserPhrase.find((el) => el === val)
+                  ? themeColor.disabledPhrasesBackgroundColor
+                  : "white",
+              }}
+              onPress={
+                selectUserPhrase.find((el) => el === val)
+                  ? null
+                  : () => setSelectUserPhrase((s) => (s.length < 3 ? [...s, val] : s))
+              }
+            >
+              <View>
+                <Text className="text-xs" style={styles.mnemonicText}>
+                  {val}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
-    </View>
+      <DropdownAlert alert={(func) => (alert = func)} />
+    </>
   );
 }
 
@@ -64,7 +142,6 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: "Inter_400Regular",
     color: "white",
-    marginTop: 20, // Added based on your previous setup for consistent spacing
   },
   page: {
     flex: 1,
@@ -76,7 +153,7 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     display: "flex", // display: "flex" is the default in React Native and can be omitted
     alignItems: "center",
-    justifyContent: 'center', // Added for vertical centering of text in the mnemonic button
+    justifyContent: "center", // Added for vertical centering of text in the mnemonic button
     width: "29%",
     backgroundColor: "white",
     borderRadius: 6,
@@ -88,7 +165,8 @@ const styles = StyleSheet.create({
   mnemonicText: {
     fontSize: 11,
   },
-  selectedMnemonic: { // Style for selected mnemonic phrases
+  selectedMnemonic: {
+    // Style for selected mnemonic phrases
     backgroundColor: themeColor.selectedBackgroundColor,
   },
 });

@@ -8,6 +8,7 @@ import { themeColor } from "../../constants/themeColor";
 import Page1 from "../../components/newWallet/Page1";
 import Page2 from "../../components/newWallet/Page2";
 import Page3 from "../../components/newWallet/Page3";
+import { useSession } from "../../hooks/ctx";
 
 const labels = ["", "", ""];
 const customStyles = {
@@ -35,6 +36,7 @@ const customStyles = {
 };
 
 export default function Page() {
+  let { setIsOnboard } = useSession();
   const [processNext, setProcessNext] = useState(0);
   const [step, setStep] = useState(0);
 
@@ -77,7 +79,7 @@ export default function Page() {
         <Page3 processNext={processNext} setProcessNext={setProcessNext} setStep={setStep} />
       ) : null}
       <View className="w-full pb-2 items-center">
-        {step < 2 ? (
+        {processNext <= 2 ? (
           <Button
             mode="contained"
             onPress={() => setProcessNext(step + 1)}
@@ -88,10 +90,14 @@ export default function Page() {
             Next
           </Button>
         ) : null}
-        {step >= 2 ? (
+        {processNext > 2 ? (
           <Button
             mode="contained"
-            onPress={() => router.replace("/")}
+            onPress={() => {
+              setIsOnboard("true");
+              router.back();
+              router.replace("/(tabs)");
+            }}
             buttonColor={themeColor.buttonPrimaryBackgroundColor}
             style={{ borderRadius: 12, width: "80%" }}
             contentStyle={{ borderRadius: 12, height: 50 }}
