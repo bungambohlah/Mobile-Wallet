@@ -8,7 +8,7 @@ export default function Page() {
   const { isOnboard } = useSession();
 
   useEffect(() => {
-    if (isOnboard) {
+    if (isOnboard === "true") {
       router.replace("/(tabs)");
     }
   }, [isOnboard]);
