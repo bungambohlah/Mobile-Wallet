@@ -7,8 +7,7 @@ import { useSession } from "../../hooks/ctx";
 import { Button } from "react-native-paper";
 
 export default function Page2_B({ processNext, setProcessNext, section, setStep }) {
-  let { userWallet } = useSession();
-  userWallet = JSON.parse(userWallet || "{}");
+  let { userWallet = "" } = useSession();
   const [isBlur, setIsBlur] = useState(true);
 
   useEffect(() => {
@@ -33,7 +32,7 @@ export default function Page2_B({ processNext, setProcessNext, section, setStep 
             className="flex flex-row flex-wrap justify-center px-3 py-6 rounded-2xl -z-50"
             style={styles.card}
           >
-            {userWallet.mnemonic?.split(" ")?.map((val, idx) => (
+            {userWallet.split(" ")?.map((val, idx) => (
               <View key={idx} style={styles.mnemonic}>
                 <Text className="text-xs" style={styles.mnemonicText}>
                   {idx + 1}. {val}

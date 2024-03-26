@@ -10,8 +10,7 @@ import { getRandomStrings } from "../../utils/helper";
 let alert = (_data) => new Promise() < DropdownAlertData > ((res) => res);
 
 export default function Page3({ processNext, setProcessNext }) {
-  let { userWallet } = useSession();
-  const wallet = JSON.parse(userWallet || "{}");
+  let { userWallet = "" } = useSession();
   const [section, setSection] = useState("confirm");
   const [correctPhrases, setCorrectPhrases] = useState([]);
   const [selectPhrases, setSelectPhrases] = useState([]);
@@ -19,9 +18,9 @@ export default function Page3({ processNext, setProcessNext }) {
 
   // useMemo to shuffle mnemonicWords
   const mnemonicWords = useMemo(() => {
-    const words = wallet.mnemonic?.split(" ") || [];
+    const words = userWallet.split(" ") || [];
     return words.sort(() => 0.5 - Math.random());
-  }, [wallet.mnemonic]);
+  }, [userWallet]);
 
   useEffect(() => {
     const mnemonicCopy = JSON.parse(JSON.stringify(mnemonicWords));
@@ -88,7 +87,7 @@ export default function Page3({ processNext, setProcessNext }) {
                     : themeColor.phraseBorderColor,
                 }}
               >
-                {wallet.mnemonic?.split(" ")?.findIndex((el) => el === val) + 1}.
+                {userWallet.split(" ")?.findIndex((el) => el === val) + 1}.
               </Text>
               {selectUserPhrase[idx] ? (
                 <Text

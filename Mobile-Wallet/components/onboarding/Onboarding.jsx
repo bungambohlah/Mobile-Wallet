@@ -84,7 +84,7 @@ export function Onboarding() {
   const handleCreateWallet = async () => {
     try {
       const newWalletDetails = await generateWallet();
-      setUserWallet(JSON.stringify(newWalletDetails));
+      setUserWallet(newWalletDetails.mnemonic);
       console.log("Wallet created:", newWalletDetails);
       Alert.alert("Wallet Created", "Your new wallet has been successfully created.");
       router.push("/new-wallet");
