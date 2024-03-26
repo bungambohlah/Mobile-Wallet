@@ -93,6 +93,11 @@ export function Onboarding() {
       Alert.alert("Error", "There was an error creating the new wallet.");
     }
   };
+
+  const handleExistingWallet = () => {
+    router.push("/have-wallet");
+  };
+
   const { width: SCREEN_WIDTH } = useWindowDimensions();
   const flatListRef = useAnimatedRef();
 
@@ -136,7 +141,7 @@ export function Onboarding() {
             Create a new wallet
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleExistingWallet}>
           <Text style={{ ...styles.buttonOutlineBoarding, width: SCREEN_WIDTH - 60 }}>
             I already have a wallet
           </Text>

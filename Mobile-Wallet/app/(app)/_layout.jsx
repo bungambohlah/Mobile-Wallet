@@ -5,6 +5,8 @@ export default function AppLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="new-wallet" options={{ headerShown: false }} />
+      <Stack.Screen name="have-wallet" options={{ headerShown: false }} />
+      <Stack.Screen name="import-seed" options={{ headerShown: false }} />
     </Stack>
   );
 }
