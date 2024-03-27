@@ -1,26 +1,30 @@
-import { View, Text, StyleSheet } from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 
-import { themeColor } from "../../../constants/themeColor";
-
-export default function Tab() {
+export default function HomePage() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Home</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.text}>Home Page Content</Text>
+        {/* You can add more content here as needed */}
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: themeColor.appBackgroundColor,
-    color: "white",
-    fontFamily: "Inter_400Regular",
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 1, // Use the entire screen
+    alignItems: 'center', // Center items horizontally
+    justifyContent: 'center', // Center items vertically
+    backgroundColor: '#f5f5f5', // Light gray background
+  },
+  content: {
+    padding: 20, // Add some padding around the content
   },
   text: {
-    fontFamily: "Inter_400Regular",
-    color: "white",
+    fontSize: 20, // Increase the font size for better readability
+    fontWeight: 'bold', // Make the text bold
+    color: '#333', // Dark gray color for the text
   },
 });

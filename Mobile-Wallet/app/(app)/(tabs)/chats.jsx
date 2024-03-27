@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 
-export default function ProfilePage() {
+export default function ChatsPage() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
