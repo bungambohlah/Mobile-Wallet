@@ -5,8 +5,8 @@ export default function ChatsPage() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.text}>Home Page Content</Text>
-        {/* You can add more content here as needed */}
+        <Text style={styles.text}>SOON Stay TUNED</Text>
+
       </View>
     </SafeAreaView>
   );
@@ -14,17 +14,17 @@ export default function ChatsPage() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, // Use the entire screen
-    alignItems: 'center', // Center items horizontally
-    justifyContent: 'center', // Center items vertically
-    backgroundColor: '#f5f5f5', // Light gray background
+    flex: 1, 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    backgroundColor: '#f5f5f5', 
   },
   content: {
-    padding: 20, // Add some padding around the content
+    padding: 20, 
   },
   text: {
-    fontSize: 20, // Increase the font size for better readability
-    fontWeight: 'bold', // Make the text bold
-    color: '#333', // Dark gray color for the text
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: '#333', 
   },
 });
