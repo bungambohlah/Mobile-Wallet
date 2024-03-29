@@ -129,6 +129,6 @@ const styles = StyleSheet.create({
     height: 450,
   },
   card: {
-    backgroundColor: themeColor.cardBackgroundColor,
+    backgroundColor: themeColor.phraseCardBackgroundColor,
   },
 });

@@ -95,7 +95,7 @@ export default function Page() {
             mode="contained"
             onPress={() => {
               setIsOnboard("true");
-              router.back();
+              router.dismissAll();
               router.replace("/(tabs)");
             }}
             buttonColor={themeColor.buttonPrimaryBackgroundColor}
