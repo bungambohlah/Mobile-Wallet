@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const DiscoverPage = () => {
   const [webViewUrl, setWebViewUrl] = useState('');
   const [showWebView, setShowWebView] = useState(false);
-  const [canGoBack, setCanGoBack] = useState(false); // Track if the WebView can go back
+  const [canGoBack, setCanGoBack] = useState(false);
   const webViewRef = useRef(null);
 
   const visitUrl = (url) => {
@@ -29,11 +29,9 @@ const DiscoverPage = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.navbar}>
-        {/* Home Icon */}
         <TouchableOpacity onPress={goBackHome} style={styles.iconButton}>
           <Icon name="home" size={24} color="#fff" />
         </TouchableOpacity>
-        {/* URL Input Field */}
         <TextInput
           style={styles.urlInput}
           value={webViewUrl}
@@ -41,13 +39,11 @@ const DiscoverPage = () => {
           placeholder="Type URL"
           placeholderTextColor="#ccc"
         />
-        {/* Conditionally render the back button when in WebView */}
         {showWebView && (
           <TouchableOpacity onPress={handleGoBackInWebView} style={styles.iconButton}>
             <Icon name="arrow-left" size={24} color="#fff" />
           </TouchableOpacity>
         )}
-        {/* Go Button */}
         <TouchableOpacity onPress={() => visitUrl(webViewUrl)} style={styles.iconButton}>
           <Icon name="arrow-right" size={24} color="#fff" />
         </TouchableOpacity>
@@ -63,23 +59,23 @@ const DiscoverPage = () => {
           startInLoadingState={true}
         />
       ) : (
-              <View style={styles.content}>
-                    <TouchableOpacity onPress={() => visitUrl('https://physica.finance/')} style={styles.card}>
-  <View style={styles.cardBox}>
-    <Image source={require('../../../assets/physica.png')} style={styles.cardImage} />
-    <Text style={styles.cardText}>Physica Finance</Text>
-  </View>
-</TouchableOpacity>
-<TouchableOpacity onPress={() => visitUrl('https://deltaswap.io/')} style={styles.card}>
-  <View style={styles.cardBox}>
-    <Image source={require('../../../assets/delta.png')} style={styles.cardImage} />
-    <Text style={styles.cardText}>DeltaSwap.io</Text>
-  </View>
-</TouchableOpacity>
-                </View>
-            )}
-        </SafeAreaView>
-    );
+        <View style={styles.content}>
+          <TouchableOpacity onPress={() => visitUrl('https://physica.finance/')} style={styles.card}>
+            <View style={styles.cardBox}>
+              <Image source={require('../../../assets/physica.png')} style={styles.cardImage} />
+              <Text style={styles.cardText}>Physica Finance</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => visitUrl('https://deltaswap.io/')} style={styles.card}>
+            <View style={styles.cardBox}>
+              <Image source={require('../../../assets/delta.png')} style={styles.cardImage} />
+              <Text style={styles.cardText}>DeltaSwap.io</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -97,18 +93,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ccc',
   },
-  fullWidthInput: {
-    flex: 1,
-    minHeight: 30,
-    maxHeight: 35,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    color: '#fff',
-    fontSize: 14,
-  },
   urlInput: {
     flex: 1,
     minHeight: 30,
@@ -117,15 +101,15 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     paddingHorizontal: 10,
     borderRadius: 10,
-    backgroundColor: '#ffffff', // You might want to change the background color to make the white text visible
-    color: '#000', // Change text color to white
+    backgroundColor: '#ffffff',
+    color: '#000',
     fontSize: 14,
   },
-iconButton: {
-  padding: 8,
-  marginLeft: 10, // Added space on the left of the icon button
-  marginRight: 10, // Added space on the right of the icon button
-},
+  iconButton: {
+    padding: 8,
+    marginLeft: 10,
+    marginRight: 10,
+  },
   navButton: {
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -135,24 +119,11 @@ iconButton: {
     alignItems: 'center',
     height: 35,
   },
-  disabledButton: {
-    backgroundColor: '#aaa',
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+  content: {
+    flex: 1,
+    alignItems: 'center',
     width: '100%',
-    textAlign: 'center',
     padding: 20,
-  },
-  subHeading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    width: '100%',
-    paddingVertical: 10,
   },
   card: {
     width: '90%',
@@ -168,43 +139,20 @@ iconButton: {
     marginTop: 10,
     marginBottom: 10,
   },
-  content: {
-    flex: 1,
-    alignItems: 'center', // Ensures that children align in the center
-    width: '100%',
-    padding: 20,
-  },
   cardText: {
     color: '#007AFF',
     fontSize: 18,
     fontWeight: 'bold',
   },
   cardBox: {
-  flexDirection: 'row', // Aligns children (image and text) horizontally
-  alignItems: 'center', // Centers children vertically in the container
-  // Add other styles as necessary, like padding
-},
-  historyItem: {
-    width: '90%',
-    backgroundColor: '#ffffff',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderColor: '#eee',
-    marginVertical: 5,
-  },
-  clearHistoryButton: {
-    width: '90%',
-    backgroundColor: '#ff3b30',
-    padding: 10,
+    flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 20,
-    marginTop: 10,
   },
   cardImage: {
-    width: 60, 
-    height: 60, 
-    resizeMode: 'contain', 
-    marginBottom: 10, 
+    width: 60,
+    height: 60,
+    resizeMode: 'contain',
+    marginBottom: 10,
   },
 });
 
