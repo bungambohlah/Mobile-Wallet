@@ -1,37 +1,26 @@
 import React, { useState, useRef } from 'react';
-import { StyleSheet, SafeAreaView, TouchableOpacity, Text, View, TextInput } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { StyleSheet, SafeAreaView, View, TouchableOpacity, Text, TextInput, Image } from 'react-native';
+import WebView from 'react-native-webview';
+import { themeColor } from '../../../constants/themeColor';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function DiscoverPage() {
-  const [history, setHistory] = useState([
-    { id: "1", url: "https://www.eth.com" },
-    { id: "2", url: "https://www.deltaswap.co.id" },
-  ]);
-  const [showWebView, setShowWebView] = useState(false);
+const DiscoverPage = () => {
   const [webViewUrl, setWebViewUrl] = useState('');
-  const [canGoBack, setCanGoBack] = useState(false);
+  const [showWebView, setShowWebView] = useState(false);
+  const [canGoBack, setCanGoBack] = useState(false); // Track if the WebView can go back
   const webViewRef = useRef(null);
 
-  const handlePressHistory = (item) => {
-    setWebViewUrl(item.url);
-    setShowWebView(true);
-  };
-
-  const handleRemoveHistory = (item) => {
-    setHistory(history.filter(historyItem => historyItem.id !== item.id));
-  };
-
-  const handleClearHistory = () => {
-    setHistory([]);
-  };
-
-  const handleVisit = (inputUrl = webViewUrl) => {
-    let url = inputUrl.startsWith('http') ? inputUrl : `https://${inputUrl}`;
+  const visitUrl = (url) => {
     setWebViewUrl(url);
     setShowWebView(true);
   };
-  
-  const handleGoBack = () => {
+
+  const goBackHome = () => {
+    setShowWebView(false);
+    setWebViewUrl('');
+  };
+
+  const handleGoBackInWebView = () => {
     if (webViewRef.current && canGoBack) {
       webViewRef.current.goBack();
     }
@@ -39,121 +28,184 @@ export default function DiscoverPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {showWebView ? (
-        <>
-          <View style={styles.navbar}>
-            <TouchableOpacity onPress={handleGoBack} disabled={!canGoBack} style={[styles.navButton, !canGoBack && styles.disabledButton]}>
-              <Text style={{ color: canGoBack ? '#000' : '#ccc' }}>Back</Text>
-            </TouchableOpacity>
-            <TextInput
-              style={styles.urlInput}
-              value={webViewUrl}
-              onChangeText={setWebViewUrl}
-              onSubmitEditing={() => handleVisit()}
-              placeholder="Type URL and press Enter"
-            />
-            <TouchableOpacity onPress={() => handleVisit()} style={styles.navButton}>
-              <Text>Go</Text>
-            </TouchableOpacity>
-          </View>
-          <WebView
-            ref={webViewRef}
-            source={{ uri: webViewUrl }}
-            style={{ flex: 1 }}
-            onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
-            javaScriptEnabled={true}
-            domStorageEnabled={true}
-            startInLoadingState={true}
-          />
-        </>
-      ) : (
-        <>
-          <Text style={styles.heading}>Discover Apps</Text>
-          <TextInput
-            style={styles.urlInput}
-            placeholder="Type URL"
-            onChangeText={(text) => setWebViewUrl(`https://${text}`)}
-          />
-          <TouchableOpacity onPress={() => handleVisit('https://www.physica.finance/')} style={styles.navButton}>
-            <Text>Visit Our dApps</Text>
+      <View style={styles.navbar}>
+        {/* Home Icon */}
+        <TouchableOpacity onPress={goBackHome} style={styles.iconButton}>
+          <Icon name="home" size={24} color="#fff" />
+        </TouchableOpacity>
+        {/* URL Input Field */}
+        <TextInput
+          style={styles.urlInput}
+          value={webViewUrl}
+          onChangeText={setWebViewUrl}
+          placeholder="Type URL"
+          placeholderTextColor="#ccc"
+        />
+        {/* Conditionally render the back button when in WebView */}
+        {showWebView && (
+          <TouchableOpacity onPress={handleGoBackInWebView} style={styles.iconButton}>
+            <Icon name="arrow-left" size={24} color="#fff" />
           </TouchableOpacity>
-          <Text style={styles.heading}>Histories</Text>
-          {history.length > 0 && (
-            <>
-              {history.map((item) => (
-                <TouchableOpacity key={item.id} onPress={() => handlePressHistory(item)} style={styles.historyItem}>
-                  <Text>{item.url}</Text>
-                </TouchableOpacity>
-              ))}
-              <TouchableOpacity onPress={handleClearHistory} style={styles.clearHistoryButton}>
-                <Text>Clear History</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </>
-      )}
-    </SafeAreaView>
-  );
-}
+        )}
+        {/* Go Button */}
+        <TouchableOpacity onPress={() => visitUrl(webViewUrl)} style={styles.iconButton}>
+          <Icon name="arrow-right" size={24} color="#fff" />
+        </TouchableOpacity>
+      </View>
+      {showWebView ? (
+        <WebView
+          ref={webViewRef}
+          source={{ uri: webViewUrl }}
+          style={{ flex: 1 }}
+          onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          startInLoadingState={true}
+        />
+      ) : (
+              <View style={styles.content}>
+                    <TouchableOpacity onPress={() => visitUrl('https://physica.finance/')} style={styles.card}>
+  <View style={styles.cardBox}>
+    <Image source={require('../../../assets/physica.png')} style={styles.cardImage} />
+    <Text style={styles.cardText}>Physica Finance</Text>
+  </View>
+</TouchableOpacity>
+<TouchableOpacity onPress={() => visitUrl('https://deltaswap.io/')} style={styles.card}>
+  <View style={styles.cardBox}>
+    <Image source={require('../../../assets/delta.png')} style={styles.cardImage} />
+    <Text style={styles.cardText}>DeltaSwap.io</Text>
+  </View>
+</TouchableOpacity>
+                </View>
+            )}
+        </SafeAreaView>
+    );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff', // Use a white background for a clean look
+    backgroundColor: themeColor.appBackgroundColor,
   },
   navbar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Ensure elements are evenly spaced
-    padding: 8, // Adjust padding for a tighter navbar
-    backgroundColor: '#007AFF', // A blue color typical for actionable items
+    justifyContent: 'space-between',
+    padding: 8,
+    width: '100%',
+    backgroundColor: themeColor.appBackgroundColor,
     borderBottomWidth: 1,
-    borderColor: '#ccc', // Light border to separate the navbar
+    borderColor: '#ccc',
+  },
+  fullWidthInput: {
+    flex: 1,
+    minHeight: 30,
+    maxHeight: 35,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    color: '#fff',
+    fontSize: 14,
   },
   urlInput: {
     flex: 1,
-    height: 35, // Specify a fixed height for the input to align with the navbar's height
+    minHeight: 30,
+    maxHeight: 35,
     borderWidth: 1,
-    borderColor: '#ccc', // Subtle border for the input
-    paddingHorizontal: 10, // Horizontal padding within the input
-    marginLeft: 10, // Space between the back button and the input field
-    marginRight: 5, // Slightly less space on the right to compensate for the "Go" button
-    borderRadius: 15, // Match the navbar's curvature
-    backgroundColor: '#f5f5f5', // Light background for the input
-    color: '#000', // Text color
-    fontSize: 16, // Adjust font size for readability
+    borderColor: '#ccc',
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: '#ffffff', // You might want to change the background color to make the white text visible
+    color: '#000', // Change text color to white
+    fontSize: 14,
   },
+iconButton: {
+  padding: 8,
+  marginLeft: 10, // Added space on the left of the icon button
+  marginRight: 10, // Added space on the right of the icon button
+},
   navButton: {
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: '#0056b3', // Darker blue for buttons to stand out
-    borderRadius: 15, // Rounded corners to match the navbar's and input field's style
+    backgroundColor: '#0056b3',
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    height: 35, // Match the height of the urlInput for uniformity
+    height: 35,
   },
   disabledButton: {
-    backgroundColor: '#aaa', // Grayed out for disabled state
+    backgroundColor: '#aaa',
   },
-  // Other styles remain unchanged
   heading: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    padding: 20,
-    color: '#007AFF',
+    color: '#333',
+    width: '100%',
     textAlign: 'center',
+    padding: 20,
   },
+  subHeading: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    width: '100%',
+    paddingVertical: 10,
+  },
+  card: {
+    width: '90%',
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  content: {
+    flex: 1,
+    alignItems: 'center', // Ensures that children align in the center
+    width: '100%',
+    padding: 20,
+  },
+  cardText: {
+    color: '#007AFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  cardBox: {
+  flexDirection: 'row', // Aligns children (image and text) horizontally
+  alignItems: 'center', // Centers children vertically in the container
+  // Add other styles as necessary, like padding
+},
   historyItem: {
+    width: '90%',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderBottomWidth: 1,
     borderColor: '#eee',
-    backgroundColor: '#f9f9f9',
+    marginVertical: 5,
   },
   clearHistoryButton: {
+    width: '90%',
+    backgroundColor: '#ff3b30',
     padding: 10,
     alignItems: 'center',
-    backgroundColor: '#ff3b30',
-    marginTop: 10,
     borderRadius: 20,
+    marginTop: 10,
+  },
+  cardImage: {
+    width: 60, 
+    height: 60, 
+    resizeMode: 'contain', 
+    marginBottom: 10, 
   },
 });
+
+export default DiscoverPage;
