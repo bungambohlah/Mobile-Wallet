@@ -1,82 +1,159 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Linking } from 'react-native';
-import { themeColor } from '../../../constants/themeColor';
-import { StyledTextInput, StyledView } from "../../../constants/styledComponents"
-import { CardVisit } from '../../../components/card/CardVisit';
-import { Heading } from '../../../components/typography/Heading';
-import { HistoryList } from '../../../components/card/HistoryList';
-import { PullToRefreshScrollView } from '../../../components/scroll';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, SafeAreaView, TouchableOpacity, Text, View, TextInput } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 export default function DiscoverPage() {
   const [history, setHistory] = useState([
-    { id: "1", url: "www.eth.com" },
-    { id: "2", url: "www.deltaswap.co.id" },
+    { id: "1", url: "https://www.eth.com" },
+    { id: "2", url: "https://www.deltaswap.co.id" },
   ]);
-  const countBrowserTab = 2;
-  const anyHistories = history.length > 0;
+  const [showWebView, setShowWebView] = useState(false);
+  const [webViewUrl, setWebViewUrl] = useState('');
+  const [canGoBack, setCanGoBack] = useState(false);
+  const webViewRef = useRef(null);
 
   const handlePressHistory = (item) => {
-    console.log("Pressed History:", item);
+    setWebViewUrl(item.url);
+    setShowWebView(true);
   };
 
   const handleRemoveHistory = (item) => {
-    console.log("Removed History:", item);
-
+    setHistory(history.filter(historyItem => historyItem.id !== item.id));
   };
 
   const handleClearHistory = () => {
-    setHistory([]); // Clearing history by setting it to an empty array
+    setHistory([]);
   };
 
-  const handleVisit = () => {
-    const url = 'https://www.physica.finance/'
-    Linking.openURL(url).catch((err) => console.error('Error opening URL:', err));
+  const handleVisit = (inputUrl = webViewUrl) => {
+    let url = inputUrl.startsWith('http') ? inputUrl : `https://${inputUrl}`;
+    setWebViewUrl(url);
+    setShowWebView(true);
+  };
+  
+  const handleGoBack = () => {
+    if (webViewRef.current && canGoBack) {
+      webViewRef.current.goBack();
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StyledView className="container items-start justify-start min-h-screen px-5 pt-16 pb-20 space-y-2" style={{ backgroundColor: themeColor.appBackgroundColor }}>
-        <Heading
-          title={`Discover Apps`}
-          fontSize="4xl"
-          setBorder={true}
-          setButton={true}
-          onPress={() => console.log("Button Discover pressed")}
-          buttonText={`${countBrowserTab}`} />
-        <PullToRefreshScrollView>
-
-          <StyledTextInput className="w-full px-3 py-5 font-semibold text-gray-500 bg-white rounded-lg" placeholderTextColor="gray" placeholder={`Type URL`} />
-
-          <CardVisit title={`Visit Our dApps`} onPress={handleVisit} />
-
-          <Heading title={`Histories`}
-            fontSize="xl"
-            setBorder={false}
-            setButton={anyHistories}
-            onPress={anyHistories ? () => handleClearHistory() : ""}
-            buttonText={anyHistories ? 'Clear' : ""} />
-          {anyHistories &&
-            <HistoryList list={history} onPress={handlePressHistory} onRemove={handleRemoveHistory} />
-          }
-        </PullToRefreshScrollView>
-      </StyledView>
+      {showWebView ? (
+        <>
+          <View style={styles.navbar}>
+            <TouchableOpacity onPress={handleGoBack} disabled={!canGoBack} style={[styles.navButton, !canGoBack && styles.disabledButton]}>
+              <Text style={{ color: canGoBack ? '#000' : '#ccc' }}>Back</Text>
+            </TouchableOpacity>
+            <TextInput
+              style={styles.urlInput}
+              value={webViewUrl}
+              onChangeText={setWebViewUrl}
+              onSubmitEditing={() => handleVisit()}
+              placeholder="Type URL and press Enter"
+            />
+            <TouchableOpacity onPress={() => handleVisit()} style={styles.navButton}>
+              <Text>Go</Text>
+            </TouchableOpacity>
+          </View>
+          <WebView
+            ref={webViewRef}
+            source={{ uri: webViewUrl }}
+            style={{ flex: 1 }}
+            onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            startInLoadingState={true}
+          />
+        </>
+      ) : (
+        <>
+          <Text style={styles.heading}>Discover Apps</Text>
+          <TextInput
+            style={styles.urlInput}
+            placeholder="Type URL"
+            onChangeText={(text) => setWebViewUrl(`https://${text}`)}
+          />
+          <TouchableOpacity onPress={() => handleVisit('https://www.physica.finance/')} style={styles.navButton}>
+            <Text>Visit Our dApps</Text>
+          </TouchableOpacity>
+          <Text style={styles.heading}>Histories</Text>
+          {history.length > 0 && (
+            <>
+              {history.map((item) => (
+                <TouchableOpacity key={item.id} onPress={() => handlePressHistory(item)} style={styles.historyItem}>
+                  <Text>{item.url}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity onPress={handleClearHistory} style={styles.clearHistoryButton}>
+                <Text>Clear History</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </>
+      )}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    backgroundColor: '#f5f5f5', 
+    flex: 1,
+    backgroundColor: '#fff', // Use a white background for a clean look
   },
-  content: {
-    padding: 20, 
+  navbar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // Ensure elements are evenly spaced
+    padding: 8, // Adjust padding for a tighter navbar
+    backgroundColor: '#007AFF', // A blue color typical for actionable items
+    borderBottomWidth: 1,
+    borderColor: '#ccc', // Light border to separate the navbar
   },
-  text: {
-    fontSize: 20, 
-    fontWeight: 'bold', 
-    color: '#333',
+  urlInput: {
+    flex: 1,
+    height: 35, // Specify a fixed height for the input to align with the navbar's height
+    borderWidth: 1,
+    borderColor: '#ccc', // Subtle border for the input
+    paddingHorizontal: 10, // Horizontal padding within the input
+    marginLeft: 10, // Space between the back button and the input field
+    marginRight: 5, // Slightly less space on the right to compensate for the "Go" button
+    borderRadius: 15, // Match the navbar's curvature
+    backgroundColor: '#f5f5f5', // Light background for the input
+    color: '#000', // Text color
+    fontSize: 16, // Adjust font size for readability
+  },
+  navButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#0056b3', // Darker blue for buttons to stand out
+    borderRadius: 15, // Rounded corners to match the navbar's and input field's style
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 35, // Match the height of the urlInput for uniformity
+  },
+  disabledButton: {
+    backgroundColor: '#aaa', // Grayed out for disabled state
+  },
+  // Other styles remain unchanged
+  heading: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    padding: 20,
+    color: '#007AFF',
+    textAlign: 'center',
+  },
+  historyItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+    backgroundColor: '#f9f9f9',
+  },
+  clearHistoryButton: {
+    padding: 10,
+    alignItems: 'center',
+    backgroundColor: '#ff3b30',
+    marginTop: 10,
+    borderRadius: 20,
   },
 });

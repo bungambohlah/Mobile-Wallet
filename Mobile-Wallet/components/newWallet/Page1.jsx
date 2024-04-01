@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Checkbox } from "react-native-paper";
 import { object, string, ref, boolean } from "yup";
-
+import { AsyncStorage } from 'react-native';
 import { themeColor } from "../../constants/themeColor";
 import FormInput from "../FormInput";
 
@@ -160,6 +160,16 @@ export default function Page1({ processNext, setProcessNext, setStep }) {
         });
     }
   }, [processNext]);
+
+  async function savePassphrase(passphrase) {
+    try {
+      await AsyncStorage.setItem('walletPassphrase', passphrase);
+      console.log('Passphrase saved successfully.');
+    } catch (error) {
+      console.error('Error saving passphrase:', error);
+    }
+  }
+  
 
   return (
     <View className="gap-16 p-6" style={styles.page}>
