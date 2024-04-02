@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   card: {
     rowGap: 16,
     columnGap: 16,
-    backgroundColor: themeColor.cardBackgroundColor,
+    backgroundColor: themeColor.phraseCardBackgroundColor,
   },
   mnemonic: {
     fontFamily: "Inter_400Regular",

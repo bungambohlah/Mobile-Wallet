@@ -164,10 +164,6 @@ const styles = StyleSheet.create({
   mnemonicText: {
     fontSize: 11,
   },
-  selectedMnemonic: {
-    // Style for selected mnemonic phrases
-    backgroundColor: themeColor.selectedBackgroundColor,
-  },
 });
 
 // Note: En
