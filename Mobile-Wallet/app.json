@@ -13,9 +13,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#01081F"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.MobileWallet"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +30,11 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-router", "expo-font", "expo-secure-store"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store"
+    ],
     "extra": {
       "router": {
         "origin": false

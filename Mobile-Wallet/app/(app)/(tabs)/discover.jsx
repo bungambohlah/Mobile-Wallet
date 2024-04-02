@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const DiscoverPage = () => {
   const [webViewUrl, setWebViewUrl] = useState('');
   const [showWebView, setShowWebView] = useState(false);
-  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoBack, setCanGoBack] = useState(false); // Track if the WebView can go back
   const webViewRef = useRef(null);
 
   const visitUrl = (url) => {
@@ -59,23 +59,40 @@ const DiscoverPage = () => {
           startInLoadingState={true}
         />
       ) : (
-        <View style={styles.content}>
-          <TouchableOpacity onPress={() => visitUrl('https://physica.finance/')} style={styles.card}>
+              <View style={styles.content}>
+                        <TouchableOpacity onPress={() => visitUrl('https://physica.finance/')} style={styles.card}>
             <View style={styles.cardBox}>
               <Image source={require('../../../assets/physica.png')} style={styles.cardImage} />
-              <Text style={styles.cardText}>Physica Finance</Text>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>Physica Finance</Text>
+                <Text style={styles.cardDescription}>A decentralized finance platform offering innovative investment solutions.</Text>
+              </View>
             </View>
           </TouchableOpacity>
+          {/* DeltaSwap.io Card */}
           <TouchableOpacity onPress={() => visitUrl('https://deltaswap.io/')} style={styles.card}>
             <View style={styles.cardBox}>
               <Image source={require('../../../assets/delta.png')} style={styles.cardImage} />
-              <Text style={styles.cardText}>DeltaSwap.io</Text>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>DeltaSwap.io</Text>
+                <Text style={styles.cardDescription}>An advanced bridge DApps.</Text>
+              </View>
             </View>
           </TouchableOpacity>
-        </View>
-      )}
-    </SafeAreaView>
-  );
+          {/* Restake.app Card */}
+          <TouchableOpacity onPress={() => visitUrl('https://restake.app/planq')} style={styles.card}>
+            <View style={styles.cardBox}>
+              <Image source={require('../../../assets/restake.png')} style={styles.cardImage} />
+              <View style={styles.cardContent}>
+                <Text style={styles.cardText}>Restake.app</Text>
+                <Text style={styles.cardDescription}>Optimize your staking rewards with automated re-staking services.</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+                </View>
+            )}
+        </SafeAreaView>
+    );
 };
 
 const styles = StyleSheet.create({
@@ -93,6 +110,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ccc',
   },
+  fullWidthInput: {
+    flex: 1,
+    minHeight: 30,
+    maxHeight: 35,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: themeColor.appBackgroundColor,
+    color: '#fff',
+    fontSize: 14,
+  },
   urlInput: {
     flex: 1,
     minHeight: 30,
@@ -101,15 +130,15 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     paddingHorizontal: 10,
     borderRadius: 10,
-    backgroundColor: '#ffffff',
-    color: '#000',
+    backgroundColor: '#ffffff', // You might want to change the background color to make the white text visible
+    color: '#000', // Change text color to white
     fontSize: 14,
   },
-  iconButton: {
-    padding: 8,
-    marginLeft: 10,
-    marginRight: 10,
-  },
+iconButton: {
+  padding: 8,
+  marginLeft: 10, // Added space on the left of the icon button
+  marginRight: 10, // Added space on the right of the icon button
+},
   navButton: {
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -119,15 +148,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 35,
   },
-  content: {
-    flex: 1,
-    alignItems: 'center',
+  disabledButton: {
+    backgroundColor: '#aaa',
+  },
+  heading: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
     width: '100%',
+    textAlign: 'center',
     padding: 20,
+  },
+  subHeading: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    width: '100%',
+    paddingVertical: 10,
   },
   card: {
     width: '90%',
-    backgroundColor: '#ffffff',
+    backgroundColor: themeColor.appBackgroundColor,
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 15,
@@ -139,20 +181,52 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
+  content: {
+    flex: 1,
+    alignItems: 'center', // Ensures that children align in the center
+    width: '100%',
+    padding: 20,
+  },
   cardText: {
     color: '#007AFF',
     fontSize: 18,
     fontWeight: 'bold',
+    marginLeft: '10px',
+    alignContent: 'center',
+  },
+  cardDescription: {
+    color: '#666', // Assuming a lighter color for the description
+    fontSize: 14,
+  },
+  cardContent: {
+    marginLeft: 10, // Adds space between the image and the text content
   },
   cardBox: {
-    flexDirection: 'row',
+  flexDirection: 'row', // Aligns children (image and text) horizontally
+  alignItems: 'center', // Centers children vertically in the container
+  // Add other styles as necessary, like padding
+},
+  historyItem: {
+    width: '90%',
+    backgroundColor: '#ffffff',
+    padding: 15,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+    marginVertical: 5,
+  },
+  clearHistoryButton: {
+    width: '90%',
+    backgroundColor: '#ff3b30',
+    padding: 10,
     alignItems: 'center',
+    borderRadius: 20,
+    marginTop: 10,
   },
   cardImage: {
-    width: 60,
-    height: 60,
-    resizeMode: 'contain',
-    marginBottom: 10,
+    width: 60, 
+    height: 60, 
+    resizeMode: 'contain', 
+    marginBottom: 10, 
   },
 });
 
