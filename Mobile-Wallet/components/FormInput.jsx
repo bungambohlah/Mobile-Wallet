@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { HelperText, TextInput } from "react-native-paper";
-import { Feather } from "@expo/vector-icons";
 
 import { themeColor } from "../constants/themeColor";
 
@@ -14,21 +13,14 @@ export default function FormInput({
   placeholder,
   style,
   multiline,
+  rightSecondComponent,
 }) {
   const [passwordVisible, setPasswordVisible] = useState(true);
 
   if (type === "password") {
     return (
       <View className={`flex flex-col w-full`} style={style}>
-        {multiline ? (
-          <TouchableOpacity
-            className="absolute right-12 top-5 z-10 mt-0.5 p-2"
-            rippleColor="rgba(255, 255, 255, .32)"
-            onPress={() => {}}
-          >
-            <Feather name="maximize" size={20} color="white" />
-          </TouchableOpacity>
-        ) : null}
+        {rightSecondComponent ? rightSecondComponent : null}
         <TextInput
           mode="outlined"
           value={multiline && passwordVisible ? password.replace(/\S/g, "•") : password}

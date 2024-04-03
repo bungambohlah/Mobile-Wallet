@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { router } from "expo-router";
 import { Button, Checkbox, Icon } from "react-native-paper";
 import { boolean, object, ref, string } from "yup";
+import DropdownAlert, { DropdownAlertType } from "react-native-dropdownalert";
+import { Feather } from "@expo/vector-icons";
+import { Camera } from "expo-camera";
 
 import { themeColor } from "../../constants/themeColor";
 import FormInput from "../../components/FormInput";
+import CameraPhrase from "../../components/camera/CameraPhrase";
 import { useSession } from "../../hooks/ctx";
+
+let alert = (_data) => new Promise()((res) => res);
 
 export default function Page() {
   let { setIsOnboard } = useSession();
@@ -23,6 +29,22 @@ export default function Page() {
     passwordConfirmErrorMessage: "",
     checkedError: false,
   });
+  const [startCamera, setStartCamera] = useState(false);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [capturedImage, setCapturedImage] = useState(null);
+
+  const onStartCamera = async () => {
+    if (permission.granted) {
+      setStartCamera(true);
+    } else if (!permission.granted) {
+      alert({
+        type: DropdownAlertType.Error,
+        title: "Error",
+        message: "Access denied.",
+      });
+      requestPermission();
+    }
+  };
 
   let phraseSchema = object().shape({
     phrases: string().required("Seed Phrases is required."),
@@ -202,77 +224,104 @@ export default function Page() {
       });
   }
 
+  // useEffect(() => {
+  //   (async () => {
+  //     if (capturedImage?.uri) {
+  //       const result = await TextRecognition.recognize(capturedImage.uri);
+  //       console.log(result);
+  //     }
+  //   })();
+  // }, [capturedImage]);
+
   return (
-    <View style={styles.container}>
-      <View className="flex flex-row w-full items-center">
-        <TouchableOpacity onPress={buttonBack}>
-          <Icon source="chevron-left" size={32} color="white" />
-        </TouchableOpacity>
-        <View className="w-full items-center flex-auto mr-8 mb-2">
-          <Text style={styles.text} className="text-lg font-bold text-center">
-            Import From Seed
-          </Text>
-        </View>
-      </View>
-      {/* Input secton */}
-      <View className="flex flex-col w-full space-y-2 mt-16 flex-1">
-        <FormInput
-          type="password"
-          error={errors.phrasesError}
-          errorMessage={errors.phrasesErrorMessage}
-          password={phrases}
-          onChangeText={onChangePhrases}
-          placeholder="Seed phrase"
-          multiline
-        />
-        <FormInput
-          type="password"
-          error={errors.passwordError}
-          errorMessage={errors.passwordErrorMessage}
-          password={password}
-          onChangeText={onChangePassword}
-          placeholder="New password"
-        />
-        <FormInput
-          type="password"
-          error={errors.passwordConfirm}
-          errorMessage={errors.passwordConfirmErrorMessage}
-          password={passwordConfirm}
-          onChangeText={onChangePasswordConfirm}
-          placeholder="Confirm password"
-        />
-        <View className="flex flex-row w-full gap-2">
-          <Checkbox
-            status={checked ? "checked" : "unchecked"}
-            color={themeColor.checkedColor}
-            uncheckedColor={errors.checkedError ? themeColor.errorColor : themeColor.neutralColor}
-            onPress={onPressChecked}
-          />
-          <View className="flex flex-wrap">
-            <Text
-              className="text-xs"
-              style={{
-                ...styles.text,
-                color: errors.checkedError ? themeColor.errorColor : "white",
-              }}
+    <>
+      {startCamera ? (
+        <CameraPhrase setCapturedImage={setCapturedImage} setStartCamera={setStartCamera} />
+      ) : (
+        <View style={styles.container}>
+          <View className="flex flex-row w-full items-center">
+            <TouchableOpacity onPress={buttonBack}>
+              <Icon source="chevron-left" size={32} color="white" />
+            </TouchableOpacity>
+            <View className="w-full items-center flex-auto mr-8 mb-2">
+              <Text style={styles.text} className="text-lg font-bold text-center">
+                Import From Seed
+              </Text>
+            </View>
+          </View>
+          {/* Input secton */}
+          <View className="flex flex-col w-full space-y-2 mt-16 flex-1">
+            <FormInput
+              type="password"
+              error={errors.phrasesError}
+              errorMessage={errors.phrasesErrorMessage}
+              password={phrases}
+              onChangeText={onChangePhrases}
+              placeholder="Seed phrase"
+              multiline
+              rightSecondComponent={
+                <TouchableOpacity
+                  className="absolute right-12 top-5 z-10 mt-0.5 p-2"
+                  rippleColor="rgba(255, 255, 255, .32)"
+                  onPress={onStartCamera}
+                >
+                  <Feather name="maximize" size={20} color="white" />
+                </TouchableOpacity>
+              }
+            />
+            <FormInput
+              type="password"
+              error={errors.passwordError}
+              errorMessage={errors.passwordErrorMessage}
+              password={password}
+              onChangeText={onChangePassword}
+              placeholder="New password"
+            />
+            <FormInput
+              type="password"
+              error={errors.passwordConfirm}
+              errorMessage={errors.passwordConfirmErrorMessage}
+              password={passwordConfirm}
+              onChangeText={onChangePasswordConfirm}
+              placeholder="Confirm password"
+            />
+            <View className="flex flex-row w-full gap-2">
+              <Checkbox
+                status={checked ? "checked" : "unchecked"}
+                color={themeColor.checkedColor}
+                uncheckedColor={
+                  errors.checkedError ? themeColor.errorColor : themeColor.neutralColor
+                }
+                onPress={onPressChecked}
+              />
+              <View className="flex flex-wrap">
+                <Text
+                  className="text-xs"
+                  style={{
+                    ...styles.text,
+                    color: errors.checkedError ? themeColor.errorColor : "white",
+                  }}
+                >
+                  By proceeding, you agree to these Term and{"\n"}Conditions.
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View className="w-full pb-2 items-center">
+            <Button
+              mode="contained"
+              onPress={importSeedPhrase}
+              buttonColor={themeColor.buttonPrimaryBackgroundColor}
+              style={{ borderRadius: 12, width: "80%" }}
+              contentStyle={{ borderRadius: 12, height: 50 }}
             >
-              By proceeding, you agree to these Term and{"\n"}Conditions.
-            </Text>
+              Next
+            </Button>
           </View>
         </View>
-      </View>
-      <View className="w-full pb-2 items-center">
-        <Button
-          mode="contained"
-          onPress={importSeedPhrase}
-          buttonColor={themeColor.buttonPrimaryBackgroundColor}
-          style={{ borderRadius: 12, width: "80%" }}
-          contentStyle={{ borderRadius: 12, height: 50 }}
-        >
-          Next
-        </Button>
-      </View>
-    </View>
+      )}
+      <DropdownAlert alert={(func) => (alert = func)} />
+    </>
   );
 }
 
