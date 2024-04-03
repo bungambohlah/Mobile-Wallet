@@ -7,7 +7,7 @@ import { themeColor } from "../../constants/themeColor";
 import { useSession } from "../../hooks/ctx";
 import { getRandomStrings } from "../../utils/helper";
 
-let alert = (_data) => new Promise() < DropdownAlertData > ((res) => res);
+let alert = (_data) => new Promise()((res) => res);
 
 export default function Page3({ processNext, setProcessNext }) {
   let { userWallet = "" } = useSession();
