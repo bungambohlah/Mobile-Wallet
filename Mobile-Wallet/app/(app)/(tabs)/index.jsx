@@ -12,7 +12,6 @@ export default function HomePage() {
   const [tokenData, setTokenData] = useState([]);
 
   const handleInvestNowPress = () => {
-    // Navigate to DiscoveryScreen with the URL as a parameter
     navigation.navigate('discover', { url: 'https://physica.finance' });
   };
 
@@ -42,10 +41,9 @@ export default function HomePage() {
       <StyledView style={styles.content}>
         <PullToRefreshScrollView>
           <CardView  
-            title="Hello" 
-            subtitle="Make your investment today" 
+            title="Make your investment today" 
             buttonText="Invest Today" 
-            onPress={handleInvestNowPress} // Use the handleInvestNowPress function here
+            onPress={handleInvestNowPress} 
           />
           <Heading title="Trending Coins" />
           <FlatList
