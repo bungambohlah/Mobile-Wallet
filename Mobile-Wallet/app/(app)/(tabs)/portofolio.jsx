@@ -7,7 +7,7 @@ import { CardPortfolio } from '../../../components/card/CardPortfolio';
 import { CoinList } from "../../../components/card/CoinList";
 import { Heading } from '../../../components/typography/Heading';
 import { PullToRefreshScrollView } from "../../../components/scroll/index";
-import { fetchEthBalance, fetchPlanqBalance } from '../../../utils/wallethelper/fetchBalance'; // Adjust the path as needed
+import { fetchEthBalance, fetchPlanqBalance } from '../../../utils/wallethelper/fetchBalance'; 
 
 
 
@@ -49,20 +49,29 @@ export default function PortfolioPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StyledView className="container items-start justify-center min-h-screen px-5 pt-16 pb-20 space-y-2" style={{ backgroundColor: themeColor.appBackgroundColor }}>
-        <Heading title={`Portfolio`} fontSize="4xl" />
-        <PullToRefreshScrollView>
-          <CardPortfolio
-            title={`Available`}
-            subtitle={`Address: ${ethAddress}`} // Display Ethereum address as subtitle
-            amount={`${ethBalance}`} // Display Ethereum balance
-            btnSendText={`Send`}
-            onPressSend={() => console.log("Button Send pressed")}
-            btnReceiveText={`Receive`}
-            onPressReceive={() => console.log("Button Receive pressed")}
-          />
-        </PullToRefreshScrollView>
-      </StyledView>
+<StyledView className="container items-start justify-center min-h-screen px-5 pt-16 pb-20 space-y-2" style={{ backgroundColor: themeColor.appBackgroundColor }}>
+    <Heading title={`Portfolio`} fontSize="4xl" />
+    <PullToRefreshScrollView>
+      {/* ETH Address Card */}
+      <CardPortfolio
+        title={ethAddress}
+        amount={`${ethBalance}`} 
+        btnSendText={`Send`}
+        onPressSend={() => console.log("ETH Send pressed")}
+        btnReceiveText={`Receive`}
+        onPressReceive={() => console.log("ETH Receive pressed")}
+      />
+      <CardPortfolio
+        title={`Planq Address`}
+        subtitle={`Address: ${planqAddress}`} 
+        amount={`Loading...`}  // Assuming you will later add functionality to display Planq balance
+        btnSendText={`Send`}
+        onPressSend={() => console.log("Planq Send pressed")}
+        btnReceiveText={`Receive`}
+        onPressReceive={() => console.log("Planq Receive pressed")}
+      />
+    </PullToRefreshScrollView>
+  </StyledView>
     </SafeAreaView>
   );
 }
